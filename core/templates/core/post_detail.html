@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+  <h2>{{ object.title }}</h2>
+  <p>By {{ object.author.username }} on {{ object.created_at }}</p>
+  <div>{{ object.content }}</div>
+
+  <h3>Comments</h3>
+  <ul>
+    {% for comment in object.comments.all %}
+      <li>{{ comment.author.username }}: {{ comment.content }} ({{ comment.created_at }})</li>
+    {% empty %}
+      <li>No comments yet.</li>
+    {% endfor %}
+  </ul>
+
+  {% if user.is_authenticated %}
+  <h4>Add a comment</h4>
+  <form method="post" action="{% url 'add_comment' object.pk %}">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">Submit</button>
+  </form>
+  {% else %}
+  <p><a href="{% url 'login' %}">Log in</a> to comment.</p>
+  {% endif %}
+{% endblock %}
